@@ -23,7 +23,7 @@ Downloads can be found in the "Release" tab
 ### Usage
 First add the stylesheet to your page:
 ```html
-<link rel="stylesheet" href="[Path to your files]/qcaptcha/css/captcha.css">
+<link rel="stylesheet" href="[Path to your files]/qcaptcha/css/captcha.min.css">
 ```
 After this add the PHP-Library:
 ```php
