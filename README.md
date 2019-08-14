@@ -11,7 +11,7 @@ QCaptcha currently supports German, English and Dutch.
 
 ![QCaptcha Preview](https://timokoessler.de/qcaptcha/img/preview.png "QCaptcha Preview")
 
-[Zur Demo](https://timokoessler.de/qcaptcha/php/ "QCaptcha Demo")
+[Go to the demo](https://timokoessler.de/qcaptcha/php/ "QCaptcha Demo")
 
 ## Installation
 ### Requirements
@@ -21,7 +21,7 @@ QCaptcha currently supports German, English and Dutch.
 
 Downloads can be found in the "Release" tab
 ### Usage
-First add the style sheet to your page:
+First add the stylesheet to your page:
 ```html
 <link rel="stylesheet" href="[Path to your files]/qcaptcha/css/captcha.css">
 ```
