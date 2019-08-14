@@ -25,7 +25,7 @@ A WordPress plugin is also available: [Learn More](https://wordpress.org/plugins
 ## Usage
 First add the stylesheet to your page:
 ```html
-<link rel="stylesheet" href="[Path to your files]/qcaptcha/css/captcha.min.css">
+<link rel="stylesheet" href="[Path to your files]/qcaptcha/css/qcaptcha.min.css">
 ```
 After this add the PHP-Library:
 ```php
@@ -33,7 +33,7 @@ include_once "[Path to your files]/qcaptcha/QCaptcha.php";
 ```
 Output the Captcha:
 ```php
-  $captcha = new Captcha();
+  $captcha = new QCaptcha();
   $captcha->build(); /*Output the captcha*/
 ```
 Validate the captcha:
