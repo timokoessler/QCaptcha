@@ -53,4 +53,4 @@ The library must store cookies on the device of the user. An Eu directive requir
 
 ## License
 
-This library is under GNU General Public License v2.0, have a look to the LICENSE file
+This library is under BSD 3-Clause License, have a look to the LICENSE file

@@ -1,24 +1,28 @@
 <?php
 /**
- * QCaptcha is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * any later version.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the conditions of the BSD 3-Clause
+ * License are met.
  *
- * QCaptcha is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with QCaptcha. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the BSD 3-Clause License
+ * along with QCaptcha. If not, see <https://choosealicense.com/licenses/bsd-3-clause/>.
  *
  * @package    QCaptcha
  * @author     Timo Kössler (https://timokoessler.de)
- * @since      1.0.0
- * @license    GPL-2.0+
+ * @since      1.0.1
+ * @license    BSD-3-Clause
  * @copyright  Copyright (c) 2019, Timo Kössler
+ * 
+ * If you have any questions or feedback feel free to contact me:
+ *  - E-Mail: info@timokoessler.de
+ *  - Other stuff: https://timokoessler.de/contact/
  */
+
+ 
+//Some options
+define("qcaptcha_default_language", "en");
+define("qcaptcha_existing_languages", array ('de', 'en', 'nl')); //If you added a language in the database you have to add it here
+
 
 function is_session_started(){
     if(php_sapi_name() !== 'cli'){
@@ -38,11 +42,11 @@ class QCaptcha {
 
     function __construct(){
         $db = $this->getdb();
-        define('lang', $this->getLanguage());
-        define('subtract_sign', $this->getBasic('subtract_sign'));
-        define('sum_sign', $this->getBasic('sum_sign'));
-        define('question_beginning', $this->getBasic('question_beginning'));
-        define('question_beginning_double', $this->getBasic('question_beginning_double'));
+        define('qcaptcha_lang', $this->getLanguage());
+        define('qcaptcha_subtract_sign', $this->getBasic('subtract_sign'));
+        define('qcaptcha_sum_sign', $this->getBasic('sum_sign'));
+        define('qcaptcha_question_beginning', $this->getBasic('question_beginning'));
+        define('qcaptcha_question_beginning_double', $this->getBasic('question_beginning_double'));
     }
 
     private function getdb(){
@@ -53,33 +57,32 @@ class QCaptcha {
         $db = $this->getdb();
         $random = rand(1, 4);
         if($random <= 2){
-            $id =  $db->querySingle('SELECT id FROM questions_' . lang . ' ORDER BY RANDOM() LIMIT 1;');
-            $question['question'] =  $db->querySingle('SELECT question FROM questions_' . lang . ' WHERE id =\'' . $id . '\'');
-            $question['answer'] =  $db->querySingle('SELECT answer FROM questions_' . lang . ' WHERE id =\'' . $id . '\'');
+            $id =  $db->querySingle('SELECT id FROM questions_' . qcaptcha_lang . ' ORDER BY RANDOM() LIMIT 1;');
+            $question['question'] =  $db->querySingle('SELECT question FROM questions_' . qcaptcha_lang . ' WHERE id =\'' . $id . '\'');
+            $question['answer'] =  $db->querySingle('SELECT answer FROM questions_' . qcaptcha_lang . ' WHERE id =\'' . $id . '\'');
             $db->close();
         } else if($random == 3){
             if(rand(1, 2) == 1){
                 $number = rand(9, 20);
-                $question['question'] = question_beginning . " " . $this->num2text($number);
+                $question['question'] = qcaptcha_question_beginning . " " . $this->num2text($number);
                 $number2 = rand(1, 20);
                 if($number2 > $number){
                     $number2 = $number2 - $number;
                 }
-                $question['question'] =  $question['question'] . " " . subtract_sign . " " . $this->num2text($number2) . "?";
+                $question['question'] =  $question['question'] . " " . qcaptcha_subtract_sign . " " . $this->num2text($number2) . "?";
                 $question['answer'] = $this->num2text($number - $number2);
             } else {
                 $number = rand(2, 10);
-                $question['question'] = question_beginning . " " . $this->num2text($number);
+                $question['question'] = qcaptcha_question_beginning . " " . $this->num2text($number);
                 $number2 = rand(1, 10);
-                $question['question'] =  $question['question'] . " " . sum_sign . " " .  $this->num2text($number2) . "?";
+                $question['question'] =  $question['question'] . " " . qcaptcha_sum_sign . " " .  $this->num2text($number2) . "?";
                 $question['answer'] = $this->num2text($number + $number2);
             }
         } else if($random == 4){
             $number = rand(2, 10);
-            $question['question'] = question_beginning_double . " " . $this->num2text($number) . "?";
+            $question['question'] = qcaptcha_question_beginning_double . " " . $this->num2text($number) . "?";
             $question['answer'] = $this->num2text($number*2);
         }
-       
         return $question;
     }
 
@@ -107,43 +110,41 @@ class QCaptcha {
             $_SESSION['qcaptcha_answer'] = $question['answer'];
             $_SESSION['qcaptcha_time'] = date('Y-m-d H:i:s');
         }
-
         return $question;
     }
 
     private function num2text($number){
         $db = $this->getdb();
-        return $db->querySingle('SELECT name FROM numbers_' . lang . ' WHERE id = \'' . $number . '\'');
+        return $db->querySingle('SELECT name FROM numbers_' . qcaptcha_lang . ' WHERE id = \'' . $number . '\'');
     }
 
     private function getLanguage(){
-        $acceptedLanguages = array ('de', 'en', 'nl'); //Languages which exists in the Database
         $array = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-        $language = 'en'; //Default Language
+        $language = qcaptcha_default_language;
         foreach($array as $lang){
             if(strpos($lang, ';')){
                 $parts = explode(';', $lang);
                 $lang = $parts[0];
-             }
+            }
             if(strpos($lang, '-')){
                 $parts = explode('-', $lang);
                 $lang = $parts[0];
-             }
-             if(strpos($lang, '_')){
-                 $parts = explode('_', $lang);
-                 $lang = $parts[0];
-             }
-             if(in_array($lang, $acceptedLanguages)){
-                 $language = $lang;
-                 break;
-             }
+            }
+            if(strpos($lang, '_')){
+                $parts = explode('_', $lang);
+                $lang = $parts[0];
+            }
+            if(in_array($lang, qcaptcha_existing_languages)){
+                $language = $lang;
+                break;
+            }
         }
         return $language;
     }
 
     private function getBasic($basic){
         $db = $this->getdb();
-        return $db->querySingle('SELECT value FROM basic_' . lang . ' WHERE key = \'' . $basic . '\'');
+        return $db->querySingle('SELECT value FROM basic_' . qcaptcha_lang . ' WHERE key = \'' . $basic . '\'');
     }
 
     public function build($theme = "modern"){
@@ -172,7 +173,6 @@ class QCaptcha {
             </div>
             </div>';
         }
-        
     }
 
     public function isValid(){
@@ -214,7 +214,6 @@ class QCaptcha {
                 return false;
             }
         }
-
     }
 
     public function isInputValid($input){
@@ -250,9 +249,7 @@ class QCaptcha {
                 return false;
             }
         }
-
     }
-
 }
 
 ?>
