@@ -13,17 +13,19 @@ QCaptcha currently supports German, English and Dutch.
 
 [Go to the demo](https://timokoessler.de/qcaptcha/php/ "QCaptcha Demo")
 
-## Installation
-### Requirements
+# Installation
+## Requirements
 
 - PHP Version 7.1 or higher
 - PHP Extension SQLite3
 
-Downloads can be found in the "Release" tab
-### Usage
+Downloads can be found in the "Release" tab.
+
+A WordPress plugin is also available: [Learn More](https://wordpress.org/plugins/qcaptcha/ "QCaptcha WP-Plugin")
+## Usage
 First add the stylesheet to your page:
 ```html
-<link rel="stylesheet" href="[Path to your files]/qcaptcha/css/captcha.min.css">
+<link rel="stylesheet" href="[Path to your files]/qcaptcha/css/qcaptcha.min.css">
 ```
 After this add the PHP-Library:
 ```php
@@ -31,7 +33,7 @@ include_once "[Path to your files]/qcaptcha/QCaptcha.php";
 ```
 Output the Captcha:
 ```php
-  $captcha = new Captcha();
+  $captcha = new QCaptcha();
   $captcha->build(); /*Output the captcha*/
 ```
 Validate the captcha:
